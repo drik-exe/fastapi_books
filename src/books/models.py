@@ -1,27 +1,33 @@
 from src.database import Base
-from sqlalchemy.orm import Mapped
-from sqlalchemy.orm import mapped_column
-from sqlalchemy import Integer, String, ForeignKey
+from sqlalchemy.orm import relationship, Mapped
+from sqlalchemy import Column, Integer, String, Text, ForeignKey, Boolean, DateTime
 from datetime import datetime
+from src.users.models import User
 
 class Book(Base):
-    __tablename__ = "books"
+    __tablename__ = 'books'
 
-    book_id: Mapped[int] = mapped_column(primary_key=True)
-    title: Mapped[str]
-    author: Mapped[str]
-    publication_date: Mapped[datetime]
-    genre: Mapped[str]
-    description: Mapped[str]
+    book_id = Column(Integer, primary_key=True, autoincrement=True)
+    title = Column(String(100), nullable=False)
+    author = Column(String(100), nullable=False)
+    publication_year = Column(Integer)
+    genre = Column(String(50))
+    description = Column(Text)
+
+    reviews = relationship('Review', back_populates='book')
+
 
 
 class Review(Base):
-    __tablename__ = "reviews"
+    __tablename__ = 'reviews'
 
-    review_id: Mapped[int] = mapped_column(primary_key=True)
-    book_id: Mapped[int] = mapped_column(ForeignKey("book.book_id"))
-    user_id: Mapped[int] = mapped_column(ForeignKey("user.user_id"))
-    text: Mapped[str]
-    created_at: Mapped[datetime] = mapped_column(default=datetime.utcnow)
-    updated_at: Mapped[datetime] = mapped_column(default=datetime.utcnow)
+    review_id = Column(Integer, primary_key=True, autoincrement=True)
+    book_id = Column(Integer, ForeignKey('books.book_id'), nullable=False)
+    user_id = Column(Integer, ForeignKey('users.user_id'), nullable=False)
+    text = Column(Text, nullable=False)
+    created_at = Column(DateTime, default=datetime.utcnow)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    user: Mapped["User"] = relationship("User", back_populates="reviews")
+    book: Mapped["Book"] = relationship("Book", back_populates="reviews")
 
