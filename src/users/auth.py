@@ -5,6 +5,7 @@ from fastapi import Depends, HTTPException
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette.requests import Request
+from starlette.responses import JSONResponse
 
 from src.config import EXPIRATION_TIME, SECRET_KEY, ALGORITHM
 from src.database import get_session
@@ -48,7 +49,10 @@ async def get_current_user(token: str = Depends(get_token_from_cookie), session:
         user = result.scalar_one()
     except Exception as e:
         print(e)
-        return {"error": str(e)}
+        return JSONResponse(
+            status_code=400,
+            content={"erroer": str(e)}
+        )
     finally:
         await session.close()
 

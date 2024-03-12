@@ -59,7 +59,10 @@ async def authenticate_user(
         user = result.scalar_one_or_none()
     except Exception as e:
         print(e)
-        return {"error": str(e)}
+        return JSONResponse(
+            status_code=400,
+            content={"erroer": str(e)}
+        )
     finally:
         await session.close()
 
@@ -87,4 +90,42 @@ async def authenticate_user(
 @router.get("/user/me")
 def get_user_me(current_user: User = Depends(get_current_user)):
     return current_user
+
+
+@router.post("/user/edit")
+async def edit_user(
+        username: str | None = None,
+        password: str | None = None,
+        email: str | None = None,
+        session: AsyncSession = Depends(get_session),
+        current_user: User = Depends(get_current_user)):
+
+    try:
+        query = select(User).where(User.username == current_user.username)
+        result = await session.execute(query)
+        user = result.scalar_one_or_none()
+
+        if username is not None:
+            user.username = username
+
+        if email is not None:
+            user.email = email
+
+        if password is not None:
+            hashed_password = pwd_context.hash(password)
+            user.hashed_password = hashed_password
+
+        session.add(user)
+
+        await session.commit()
+        return {"user": user}
+    except Exception as e:
+        print(e)
+        await session.rollback()
+        return JSONResponse(
+            status_code=400,
+            content={"erroer": str(e)}
+        )
+    finally:
+        await session.close()
 
