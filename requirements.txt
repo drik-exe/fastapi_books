@@ -4,3 +4,7 @@ uvicorn~=0.27.1
 python-dotenv~=1.0.1
 SQLAlchemy~=2.0.28
 asyncpg~=0.29.0
+pyjwt~=2.8.0
+passlib~=1.7.4
+python-multipart
+bcrypt==4.0.1

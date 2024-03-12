@@ -1,8 +1,14 @@
 from os import getenv
 from dotenv import load_dotenv
-
+from datetime import timedelta
 
 load_dotenv()
+
+
+
+SECRET_KEY = getenv("SECRET_KEY")
+ALGORITHM = "HS256"
+EXPIRATION_TIME = timedelta(minutes=30)
 
 
 DB_HOST = getenv("DB_HOST")

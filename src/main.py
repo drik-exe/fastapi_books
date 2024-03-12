@@ -3,17 +3,21 @@ import uvicorn
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.books.models import Book
-from src.database import get_session
+from src.database import engine, Base
+from src.users.routers import router as user_router
+
+
 
 app = FastAPI(
     title="Books app"
 )
 
-@app.get("/")
-async def get_books(session: AsyncSession = Depends(get_session)):
-    result = await session.execute(select(Book))
-    return result.scalars().all()
+# @app.on_event("startup")
+# async def startup_event():
+#     async with engine.begin() as conn:
+#         await conn.run_sync(Base.metadata.create_all)
+
+app.include_router(user_router)
 
 
 if __name__ == '__main__':

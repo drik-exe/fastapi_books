@@ -33,6 +33,7 @@ if config.config_file_name is not None:
 from src.database import Base
 from src.books.models import Book, Review
 from src.users.models import User
+
 target_metadata = Base.metadata
 
 # other values from the config, defined by the needs of env.py,
