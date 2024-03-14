@@ -5,7 +5,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.database import engine, Base
 from src.users.routers import router as user_router
-
+from src.books.routers import router as book_router
 
 
 app = FastAPI(
@@ -18,7 +18,7 @@ app = FastAPI(
 #         await conn.run_sync(Base.metadata.create_all)
 
 app.include_router(user_router)
-
+app.include_router(book_router)
 
 if __name__ == '__main__':
     uvicorn.run('main:app', reload=True)

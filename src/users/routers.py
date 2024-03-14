@@ -35,12 +35,8 @@ async def register_user(
         await session.commit()
         return {"user": new_user}
     except Exception as e:
-        print(e)
         await session.rollback()
-        return JSONResponse(
-            status_code=400,
-            content={"erroer": str(e)}
-        )
+        raise HTTPException(status_code=400, detail=str(e))
     finally:
         await session.close()
 
@@ -58,11 +54,8 @@ async def authenticate_user(
         result = await session.execute(query)
         user = result.scalar_one_or_none()
     except Exception as e:
-        print(e)
-        return JSONResponse(
-            status_code=400,
-            content={"erroer": str(e)}
-        )
+        await session.rollback()
+        raise HTTPException(status_code=400, detail=str(e))
     finally:
         await session.close()
 
@@ -120,12 +113,9 @@ async def edit_user(
         await session.commit()
         return {"user": user}
     except Exception as e:
-        print(e)
         await session.rollback()
-        return JSONResponse(
-            status_code=400,
-            content={"erroer": str(e)}
-        )
+        raise HTTPException(status_code=400, detail=str(e))
     finally:
         await session.close()
+
 
