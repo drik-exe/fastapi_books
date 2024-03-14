@@ -41,7 +41,7 @@ async def get_current_user(token: str = Depends(get_token_from_cookie), session:
     decoded_data = verify_jwt_token(token)
     if not decoded_data:
         raise HTTPException(status_code=400, detail="Invalid token")
-    # user = get_user(decoded_data["sub"])
+
 
     try:
         query = select(User).where(User.username == decoded_data["sub"])
@@ -57,5 +57,5 @@ async def get_current_user(token: str = Depends(get_token_from_cookie), session:
         await session.close()
 
     if not user:
-        raise HTTPException(status_code=400, detail="User not found")
+        raise HTTPException(status_code=401, detail="User not found")
     return user

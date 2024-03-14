@@ -25,7 +25,7 @@ pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 async def register_user(
         username: str,
         password: str,
-        email: Optional[str] = None,
+        email: str,
         session: AsyncSession = Depends(get_session)):
     hashed_password = pwd_context.hash(password)
 

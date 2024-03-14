@@ -7,8 +7,8 @@ from datetime import datetime
 class Book(Base):
     __tablename__ = 'books'
 
-    book_id = Column(Integer, primary_key=True, autoincrement=True)
-    title = Column(String(100), nullable=False)
+    book_id: Mapped[int] = Column(Integer, primary_key=True, autoincrement=True)
+    title: Mapped[str] = Column(String(100), nullable=False)
     author = Column(String(100), nullable=False)
     publication_year = Column(Integer)
     genre = Column(String(50))

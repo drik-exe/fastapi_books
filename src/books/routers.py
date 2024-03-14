@@ -2,9 +2,11 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.books.models import Book
+from src.books.models import Book, Review
 from src.books.schemas import BookModel
 from src.database import get_session
+from src.users.auth import get_current_user
+from src.users.models import User
 
 router = APIRouter(
     prefix="/books",
@@ -12,10 +14,11 @@ router = APIRouter(
 )
 
 
-@router.post("/create", response_model=BookModel)
+@router.post("/create")
 async def create_book(
         book: BookModel,
         session: AsyncSession = Depends(get_session)):
+    print(book)
     try:
         new_book = Book(
             title=book.title,
@@ -49,3 +52,32 @@ async def search_books(
         raise HTTPException(status_code=400, detail=str(e))
     finally:
         await session.close()
+
+
+@router.post("/review/{book_id}")
+async def create_review(
+        book_id: int,
+        review_text: str,
+        session: AsyncSession = Depends(get_session),
+        current_user: User = Depends(get_current_user)):
+    try:
+        query = select(Book).where(Book.book_id == book_id)
+        results = await session.execute(query)
+        book = results.scalar_one_or_none()
+        if book is None:
+            raise HTTPException(status_code=400, detail="books does not exist")
+
+        review = Review(
+            book_id=book.book_id,
+            user_id=current_user.user_id,
+            text=review_text
+        )
+        session.add(review)
+        await session.commit()
+        return {"review": review}
+    except Exception as e:
+        await session.rollback()
+        raise HTTPException(status_code=400, detail=str(e))
+    finally:
+        await session.close()
+
