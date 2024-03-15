@@ -81,3 +81,55 @@ async def create_review(
     finally:
         await session.close()
 
+
+@router.get("/check_users_reviews")
+async def check_users_reviews(
+        session: AsyncSession = Depends(get_session),
+        current_user: User = Depends(get_current_user)):
+    try:
+        query = select(Review).where(Review.user_id == current_user.user_id)
+        results = await session.execute(query)
+        reviews = results.scalar()
+        await session.commit()
+        return {"review": reviews}
+    except Exception as e:
+        await session.rollback()
+        raise HTTPException(status_code=400, detail=str(e))
+    finally:
+        await session.close()
+
+
+@router.get("/check_books_reviews/{book_id}")
+async def check_books_reviews(
+        book_id: int,
+        session: AsyncSession = Depends(get_session)):
+    try:
+        query = select(Review).where(Review.book_id == book_id)
+        results = await session.execute(query)
+        reviews = results.scalar()
+        await session.commit()
+        return {"reviews": reviews}
+    except Exception as e:
+        await session.rollback()
+        raise HTTPException(status_code=400, detail=str(e))
+    finally:
+        await session.close()
+
+
+
+@router.put("/update_review/{review_id}")
+async def update_review(
+        review_id: int,
+        new_text: str,
+        session: AsyncSession = Depends(get_session),
+        current_user: User = Depends(get_current_user)):
+    async with session.begin():
+        review = await session.get(Review, review_id)
+        if not review:
+            raise HTTPException(status_code=404, detail="Comment not found")
+        if review.user_id != current_user.user_id:
+            raise HTTPException(status_code=403, detail="Not authorized to update this comment")
+
+        review.text = new_text
+        await session.commit()
+        return {"review": review}

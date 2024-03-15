@@ -22,8 +22,8 @@ class Review(Base):
     __tablename__ = 'reviews'
 
     review_id = Column(Integer, primary_key=True, autoincrement=True)
-    book_id = Column(Integer, ForeignKey('books.book_id'), nullable=False)
-    user_id = Column(Integer, ForeignKey('users.user_id'), nullable=False)
+    book_id: Mapped[int] = Column(Integer, ForeignKey('books.book_id'), nullable=False)
+    user_id: Mapped[int] = Column(Integer, ForeignKey('users.user_id'), nullable=False)
     text = Column(Text, nullable=False)
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
