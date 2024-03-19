@@ -1,5 +1,7 @@
+from datetime import datetime, timedelta
+
 from fastapi import APIRouter, Depends, HTTPException
-from sqlalchemy import select
+from sqlalchemy import select, func, desc
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.books.models import Book, Review
@@ -7,6 +9,9 @@ from src.books.schemas import BookModel
 from src.database import get_session
 from src.users.auth import get_current_user
 from src.users.models import User
+
+from fastapi_cache.decorator import cache
+import time
 
 router = APIRouter(
     prefix="/books",
@@ -82,7 +87,7 @@ async def create_review(
         await session.close()
 
 
-@router.get("/check_users_reviews")
+@router.get("/check-users-reviews")
 async def check_users_reviews(
         session: AsyncSession = Depends(get_session),
         current_user: User = Depends(get_current_user)):
@@ -99,7 +104,7 @@ async def check_users_reviews(
         await session.close()
 
 
-@router.get("/check_books_reviews/{book_id}")
+@router.get("/check-books-reviews/{book_id}")
 async def check_books_reviews(
         book_id: int,
         session: AsyncSession = Depends(get_session)):
@@ -117,7 +122,7 @@ async def check_books_reviews(
 
 
 
-@router.put("/update_review/{review_id}")
+@router.put("/update-review/{review_id}")
 async def update_review(
         review_id: int,
         new_text: str,
@@ -133,3 +138,32 @@ async def update_review(
         review.text = new_text
         await session.commit()
         return {"review": review}
+
+
+@router.get("/book-of-the-week")
+@cache(expire=5)
+async def get_book_of_the_week(session: AsyncSession = Depends(get_session)):
+    week_ago = datetime.utcnow() - timedelta(days=7)
+    try:
+        query = select(
+                Book, func.count(Review.review_id).label("review_count")
+            ).join(
+                Review, Review.book_id == Book.book_id
+            ).filter(
+                Review.created_at >= week_ago
+            ).group_by(
+                Book.book_id
+            ).order_by(
+                desc("review_count")
+            ).limit(1)
+        results = await session.execute(query)
+        time.sleep(2)
+        most_commented_book = results.scalar_one_or_none()
+        if most_commented_book is None:
+            raise HTTPException(status_code=400, detail="No book for this week")
+        return {"book of the week": most_commented_book}
+    except Exception as e:
+        await session.rollback()
+        raise HTTPException(status_code=400, detail=str(e))
+    finally:
+        await session.close()

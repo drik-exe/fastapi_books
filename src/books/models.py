@@ -25,7 +25,7 @@ class Review(Base):
     book_id: Mapped[int] = Column(Integer, ForeignKey('books.book_id'), nullable=False)
     user_id: Mapped[int] = Column(Integer, ForeignKey('users.user_id'), nullable=False)
     text = Column(Text, nullable=False)
-    created_at = Column(DateTime, default=datetime.utcnow)
+    created_at: Mapped[datetime] = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
     user: Mapped["User"] = relationship("User", back_populates="reviews")
