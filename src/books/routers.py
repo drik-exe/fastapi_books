@@ -141,7 +141,7 @@ async def update_review(
 
 
 @router.get("/book-of-the-week")
-@cache(expire=5)
+@cache(expire=10)
 async def get_book_of_the_week(session: AsyncSession = Depends(get_session)):
     week_ago = datetime.utcnow() - timedelta(days=7)
     try:

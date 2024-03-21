@@ -6,13 +6,16 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from redis import asyncio as aioredis
 from contextlib import asynccontextmanager
+
+from src.config import REDIS_HOST, REDIS_PORT
 from src.users.routers import router as user_router
 from src.books.routers import router as book_router
+from src.tasks.routers import router as report_router
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    redis = aioredis.from_url("redis://localhost:6379", encoding="utf8", decode_responses=True)
+    redis = aioredis.from_url(f"redis://{REDIS_HOST}:{REDIS_PORT}", encoding="utf8", decode_responses=True)
     FastAPICache.init(RedisBackend(redis), prefix="fastapi-cache")
     yield
 
@@ -25,7 +28,7 @@ app = FastAPI(
 
 app.include_router(user_router)
 app.include_router(book_router)
-
+app.include_router(report_router)
 
 
 
