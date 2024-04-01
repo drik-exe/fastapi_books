@@ -7,7 +7,7 @@ from sqlalchemy.ext.asyncio import async_engine_from_config
 
 from alembic import context
 
-from src.config import DB_HOST, DB_PORT, DB_USER, DB_NAME, DB_PASS
+from config import DB_HOST, DB_PORT, DB_USER, DB_NAME, DB_PASS
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
@@ -31,8 +31,8 @@ if config.config_file_name is not None:
 # from myapp import mymodel
 # target_metadata = mymodel.Base.metadata
 from src.database import Base
-from src.books.models import Book, Review
-from src.users.models import User
+from books.models import Book, Review
+from users.models import User
 
 target_metadata = Base.metadata
 

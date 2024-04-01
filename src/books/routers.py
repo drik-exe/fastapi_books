@@ -4,11 +4,11 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy import select, func, desc
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.books.models import Book, Review
-from src.books.schemas import BookModel
-from src.database import get_session
-from src.users.auth import get_current_user
-from src.users.models import User
+from books.models import Book, Review
+from books.schemas import BookModel
+from database import get_session
+from users.auth import get_current_user
+from users.models import User
 
 from fastapi_cache.decorator import cache
 import time
@@ -23,7 +23,7 @@ router = APIRouter(
 async def create_book(
         book: BookModel,
         session: AsyncSession = Depends(get_session)):
-    print(book)
+
     try:
         new_book = Book(
             title=book.title,
@@ -36,6 +36,7 @@ async def create_book(
         await session.commit()
         return {"book": new_book}
     except Exception as e:
+        print(e)
         await session.rollback()
         raise HTTPException(status_code=400, detail=str(e))
     finally:

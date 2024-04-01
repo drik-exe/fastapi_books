@@ -1,5 +1,5 @@
-from src.books.models import Review
-from src.database import Base
+from books.models import Review
+from database import Base
 from sqlalchemy import Column, Integer, String, Text, ForeignKey, Boolean, DateTime
 from sqlalchemy.orm import relationship, Mapped
 

@@ -1,17 +1,14 @@
-from datetime import timedelta
-from typing import Optional
 from fastapi.security import OAuth2PasswordRequestForm
 from fastapi import APIRouter, Depends, HTTPException, Response
 from sqlalchemy import select
-from starlette.responses import JSONResponse
 
-from src.config import EXPIRATION_TIME
-from src.database import get_session
+from config import EXPIRATION_TIME
+from database import get_session
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from passlib.context import CryptContext
-from src.users.auth import create_jwt_token, get_current_user
-from src.users.models import User
+from users.auth import create_jwt_token, get_current_user
+from users.models import User
 
 
 router = APIRouter(

@@ -1,0 +1,60 @@
+version: "3.7"
+
+services:
+  db:
+    image: postgres:15
+    container_name: db_app
+    command: -p 5440
+    expose:
+      - 5440
+    env_file:
+      - .env-production
+
+
+  redis:
+    image: redis:7
+    container_name: redis_app
+    command: --port 6380
+    expose:
+      - 6480
+
+  app:
+    build:
+      context: .
+    env_file:
+      - .env-production
+    container_name: fastapi_app
+    command: ["/fastapi_books/docker/app.sh"]
+    ports:
+      - 9999:8000
+    depends_on:
+      - db
+      - redis
+
+
+
+  celery:
+    build:
+      context: .
+    env_file:
+      - .env-production
+    container_name: celery_app
+    command: ["/fastapi_books/docker/celery.sh", "celery"]
+    depends_on:
+      - redis
+
+
+
+
+  flower:
+    build:
+      context: .
+    env_file:
+      - .env-production
+    container_name: flower_app
+    command: ["/fastapi_books/docker/celery.sh", "flower"]
+    depends_on:
+      - redis
+      - celery
+    ports:
+      - 8888:5555

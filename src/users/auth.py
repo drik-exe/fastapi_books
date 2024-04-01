@@ -7,10 +7,10 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from starlette.requests import Request
 from starlette.responses import JSONResponse
 
-from src.config import EXPIRATION_TIME, SECRET_KEY, ALGORITHM
-from src.database import get_session
+from config import EXPIRATION_TIME, SECRET_KEY, ALGORITHM
+from database import get_session
 from fastapi.security import OAuth2PasswordBearer
-from src.users.models import User
+from users.models import User
 
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/users/token")

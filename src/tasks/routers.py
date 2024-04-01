@@ -1,7 +1,7 @@
 from fastapi import APIRouter, BackgroundTasks, Depends
 
-from src.tasks.tasks import send_email_report
-from src.users.auth import get_current_user
+from tasks.tasks import send_email_report
+from users.auth import get_current_user
 
 
 
