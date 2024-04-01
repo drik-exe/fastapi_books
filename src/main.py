@@ -1,16 +1,17 @@
-from fastapi import FastAPI, Depends
-import uvicorn
-from fastapi_cache import FastAPICache
-from fastapi_cache.backends.redis import RedisBackend
-from sqlalchemy import select
-from sqlalchemy.ext.asyncio import AsyncSession
-from redis import asyncio as aioredis
 from contextlib import asynccontextmanager
 
-from config import REDIS_HOST, REDIS_PORT
-from users.routers import router as user_router
+import uvicorn
+from fastapi import Depends, FastAPI
+from fastapi_cache import FastAPICache
+from fastapi_cache.backends.redis import RedisBackend
+from redis import asyncio as aioredis
+from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
+
 from books.routers import router as book_router
+from config import REDIS_HOST, REDIS_PORT
 from tasks.routers import router as report_router
+from users.routers import router as user_router
 
 
 @asynccontextmanager
