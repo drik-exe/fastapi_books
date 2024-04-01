@@ -1,17 +1,16 @@
-import jwt
 from datetime import datetime
 
+import jwt
 from fastapi import Depends, HTTPException
+from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette.requests import Request
 from starlette.responses import JSONResponse
 
-from config import EXPIRATION_TIME, SECRET_KEY, ALGORITHM
+from config import ALGORITHM, EXPIRATION_TIME, SECRET_KEY
 from database import get_session
-from fastapi.security import OAuth2PasswordBearer
 from users.models import User
-
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/users/token")
 

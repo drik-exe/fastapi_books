@@ -1,7 +1,9 @@
+import time
 from datetime import datetime, timedelta
 
 from fastapi import APIRouter, Depends, HTTPException
-from sqlalchemy import select, func, desc
+from fastapi_cache.decorator import cache
+from sqlalchemy import desc, func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from books.models import Book, Review
@@ -9,9 +11,6 @@ from books.schemas import BookModel
 from database import get_session
 from users.auth import get_current_user
 from users.models import User
-
-from fastapi_cache.decorator import cache
-import time
 
 router = APIRouter(
     prefix="/books",

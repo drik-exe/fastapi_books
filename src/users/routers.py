@@ -1,15 +1,13 @@
-from fastapi.security import OAuth2PasswordRequestForm
 from fastapi import APIRouter, Depends, HTTPException, Response
+from fastapi.security import OAuth2PasswordRequestForm
+from passlib.context import CryptContext
 from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from config import EXPIRATION_TIME
 from database import get_session
-from sqlalchemy.ext.asyncio import AsyncSession
-
-from passlib.context import CryptContext
 from users.auth import create_jwt_token, get_current_user
 from users.models import User
-
 
 router = APIRouter(
     prefix="/users",

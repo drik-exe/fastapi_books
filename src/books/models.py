@@ -1,7 +1,10 @@
-from database import Base
-from sqlalchemy.orm import relationship, Mapped
-from sqlalchemy import Column, Integer, String, Text, ForeignKey, Boolean, DateTime
 from datetime import datetime
+
+from sqlalchemy import (Boolean, Column, DateTime, ForeignKey, Integer, String,
+                        Text)
+from sqlalchemy.orm import Mapped, relationship
+
+from database import Base
 
 
 class Book(Base):
