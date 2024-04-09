@@ -1,27 +1,25 @@
 import asyncio
+import os
+import sys
 from typing import AsyncGenerator
 
 import pytest
 import pytest_asyncio
 from fastapi.testclient import TestClient
 from httpx import AsyncClient
-from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine, async_sessionmaker
+from sqlalchemy.ext.asyncio import (AsyncSession, async_sessionmaker,
+                                    create_async_engine)
 from sqlalchemy.pool import NullPool
-import os
-import sys
-
-
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../src')))
 
 from books.models import Book, Review
+from config import (TEST_DB_HOST, TEST_DB_NAME, TEST_DB_PASS, TEST_DB_PORT,
+                    TEST_DB_USER)
+from database import Base, get_session
+from main import app
 from users.auth import get_current_user
 from users.models import User
-from database import get_session
-from database import Base
-from config import (TEST_DB_NAME, TEST_DB_PASS, TEST_DB_PORT,
-                    TEST_DB_USER, TEST_DB_HOST)
-from main import app
 
 # DATABASE
 DATABASE_URL_TEST = f"postgresql+asyncpg://{TEST_DB_USER}:{TEST_DB_PASS}@{TEST_DB_HOST}:{TEST_DB_PORT}/{TEST_DB_NAME}"
